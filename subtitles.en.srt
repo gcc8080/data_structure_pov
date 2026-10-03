@@ -1,0 +1,163 @@
+1
+00:00:00,600 --> 00:00:04,600
+Everything begins with a bit.
+
+2
+00:00:05,000 --> 00:00:09,600
+Zeros and ones mean nothing on their own.
+
+3
+00:00:10,000 --> 00:00:15,200
+Until we give them structure.
+
+4
+00:00:18,200 --> 00:00:23,400
+Data structures: giving information a shape.
+
+5
+00:00:28,000 --> 00:00:33,000
+An array: elements standing shoulder to shoulder in memory.
+
+6
+00:00:33,500 --> 00:00:38,600
+Know the index, and you are there in one step — O(1).
+
+7
+00:00:39,000 --> 00:00:44,200
+Address = base + index × size.
+
+8
+00:00:44,600 --> 00:00:49,600
+But insert in the middle, and everyone behind must move.
+
+9
+00:00:50,000 --> 00:00:55,600
+Contiguity is its speed — and its price.
+
+10
+00:01:00,000 --> 00:01:05,000
+A linked list trades contiguity for freedom.
+
+11
+00:01:05,400 --> 00:01:10,600
+Each node remembers only one thing: where the next one is.
+
+12
+00:01:11,000 --> 00:01:16,200
+Insert? Rewire two pointers. O(1).
+
+13
+00:01:16,600 --> 00:01:23,000
+Search? Follow the chain, one by one. O(n).
+
+14
+00:01:28,000 --> 00:01:33,000
+Stack: last in, first out.
+
+15
+00:01:33,400 --> 00:01:38,200
+Function calls and undo history all live on a stack.
+
+16
+00:01:38,600 --> 00:01:43,600
+Queue: first in, first out. Fair and orderly.
+
+17
+00:01:44,000 --> 00:01:51,000
+Constraint, it turns out, is a kind of power.
+
+18
+00:01:56,000 --> 00:02:01,000
+A hash function turns any key into a location.
+
+19
+00:02:01,400 --> 00:02:06,600
+Don't search. Compute.
+
+20
+00:02:07,000 --> 00:02:12,200
+Two keys, one bucket? That is a collision.
+
+21
+00:02:12,600 --> 00:02:17,600
+Chaining, open addressing — each has an answer.
+
+22
+00:02:18,000 --> 00:02:23,400
+Average O(1) — the heartbeat of modern software.
+
+23
+00:02:28,000 --> 00:02:33,000
+A tree organizes data into a hierarchy.
+
+24
+00:02:33,400 --> 00:02:38,600
+Binary search tree: smaller to the left, larger to the right.
+
+25
+00:02:39,000 --> 00:02:44,200
+Every step discards half of what remains. O(log n).
+
+26
+00:02:44,600 --> 00:02:49,600
+A billion records, found within thirty steps.
+
+27
+00:02:50,000 --> 00:02:55,200
+Out of balance? Rotate, and restore it.
+
+28
+00:02:55,600 --> 00:02:59,600
+File systems, database indexes — all trees.
+
+29
+00:03:03,600 --> 00:03:08,200
+A heap: the most important item is always on top.
+
+30
+00:03:08,600 --> 00:03:13,600
+New elements sift up to find their rightful place.
+
+31
+00:03:14,000 --> 00:03:19,600
+Schedulers and shortest paths ask it: what comes next?
+
+32
+00:03:24,000 --> 00:03:29,000
+A graph: everything is a node, every relation an edge.
+
+33
+00:03:29,400 --> 00:03:34,600
+Social networks. Maps. The Internet itself.
+
+34
+00:03:35,000 --> 00:03:40,200
+Breadth-first: spreading outward, ring by ring, like a ripple.
+
+35
+00:03:40,600 --> 00:03:46,200
+Dijkstra: among countless routes, find the shortest one.
+
+36
+00:03:46,600 --> 00:03:52,200
+When structure is rich enough, the world becomes computable.
+
+37
+00:04:04,000 --> 00:04:09,200
+Choosing a data structure is choosing the shape of time.
+
+38
+00:04:09,600 --> 00:04:14,800
+O(1), O(log n), O(n), O(n²) — at scale, worlds apart.
+
+39
+00:04:15,200 --> 00:04:19,800
+At n = one million: 1 step, 20 steps, a million — a trillion.
+
+40
+00:04:26,600 --> 00:04:35,400
+Get the structure right, and the algorithm reveals itself.
+
+41
+00:04:37,200 --> 00:04:42,000
+Every app you use stands on these invisible structures.
