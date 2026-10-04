@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>数据结构 · Data Structures</title>
+<style>
+  :root { --ink:#eaf6ff; --dim:#8aa0c8; --accent:#38e8ff; --bg:#000; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif; overflow:hidden; }
+  #stage { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#000; }
+  canvas { width:min(100vw, calc(100vh * 16 / 9)); height:auto; aspect-ratio:16/9; display:block; background:#000; }
+  #start { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; background:radial-gradient(ellipse at center, rgba(20,30,80,.55), rgba(0,0,0,.92)); cursor:pointer; z-index:5; transition:opacity .6s; }
+  #start h1 { margin:0; font-size:clamp(34px,7vw,88px); font-weight:900; letter-spacing:.2em; background:linear-gradient(90deg,#38e8ff,#fff,#8b5cf6,#ff3dcb); -webkit-background-clip:text; background-clip:text; color:transparent; padding-left:.2em; }
+  #start p { margin:0; letter-spacing:.35em; color:var(--dim); font-size:clamp(11px,1.6vw,16px); text-align:center; padding:0 16px; }
+  #start .play { margin-top:18px; width:84px; height:84px; border-radius:50%; border:2px solid var(--accent); display:grid; place-items:center; box-shadow:0 0 40px rgba(56,232,255,.45), inset 0 0 20px rgba(56,232,255,.25); }
+  #start .play:after { content:""; margin-left:8px; border-left:26px solid #fff; border-top:16px solid transparent; border-bottom:16px solid transparent; }
+  #start small { color:#5f7299; letter-spacing:.2em; font-size:12px; }
+  #bar { position:fixed; left:0; right:0; bottom:0; padding:14px 18px 16px; display:flex; align-items:center; gap:14px; background:linear-gradient(transparent, rgba(0,0,0,.8)); opacity:0; transition:opacity .35s; z-index:4; font:500 13px/1 "JetBrains Mono",ui-monospace,Menlo,monospace; }
+  body.idle-off #bar, #bar:hover { opacity:1; }
+  button { background:none; border:1px solid rgba(160,200,255,.35); color:var(--ink); border-radius:8px; height:34px; min-width:40px; padding:0 10px; cursor:pointer; font:inherit; }
+  button:hover { border-color:var(--accent); color:#fff; }
+  #seek { flex:1; position:relative; height:22px; cursor:pointer; }
+  #seek .track { position:absolute; left:0; right:0; top:10px; height:3px; background:rgba(160,200,255,.2); border-radius:2px; }
+  #seek .fill { position:absolute; left:0; top:10px; height:3px; background:var(--accent); border-radius:2px; box-shadow:0 0 10px var(--accent); }
+  #seek .tick { position:absolute; top:5px; width:2px; height:13px; background:rgba(255,255,255,.45); }
+  #seek .tick span { position:absolute; bottom:16px; left:50%; transform:translateX(-50%); white-space:nowrap; font-size:10px; color:var(--dim); opacity:0; transition:opacity .2s; }
+  #seek:hover .tick span { opacity:1; }
+  #time { color:var(--dim); min-width:96px; text-align:right; }
+  @media (max-width:640px){ #seek .tick span{display:none} #time{min-width:70px} }
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="cv" width="1920" height="1080"></canvas></div>
+<div id="start">
+  <h1>数据结构</h1>
+  <p>DATA STRUCTURES · THE ARCHITECTURE OF THOUGHT</p>
+  <div class="play" aria-label="Play"></div>
+  <small>5 MIN · 中英双语 · 建议开启声音 / SOUND ON</small>
+</div>
+<div id="bar">
+  <button id="pp" title="Play / Pause (Space)">❚❚</button>
+  <div id="seek"><div class="track"></div><div class="fill"></div></div>
+  <span id="time">00:00 / 05:00</span>
+  <button id="fs" title="Fullscreen (F)">⛶</button>
+</div>
+<script src="events.js"></script>
+<script src="script.js"></script>
+<script src="core.js"></script>
+<script src="scenes1.js"></script>
+<script src="scenes2.js"></script>
+<script src="scenes3.js"></script>
+<script>
+(function () {
+  const EXPORT = /[?&]export/.test(location.search);
+  const cv = document.getElementById("cv"), ctx = cv.getContext("2d");
+  if (EXPORT) {
+    document.getElementById("start").remove(); document.getElementById("bar").remove();
+    window.renderAt = (t, q = 0.93) => { DS.render(ctx, t); return cv.toDataURL("image/jpeg", q); };
+    window.renderOnly = (t) => { DS.render(ctx, t); };
+    window.READY = document.fonts.ready.then(() => true);
+    return;
+  }
+  // web fonts for the live player (export uses locally installed Noto / DejaVu)
+  const l = document.createElement("link"); l.rel = "stylesheet";
+  l.href = "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&family=JetBrains+Mono:wght@500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap";
+  document.head.appendChild(l);
+
+  const audio = new Audio(); audio.src = "score.mp3"; audio.preload = "auto";
+  let playing = false, clock0 = 0, clockT = 0, useClock = false;
+  audio.addEventListener("error", () => { useClock = true; });
+  const now = () => useClock ? (playing ? clockT + (performance.now() - clock0) / 1000 : clockT) : audio.currentTime;
+  function play() {
+    playing = true; document.getElementById("pp").textContent = "❚❚";
+    if (useClock) { clock0 = performance.now(); return; }
+    audio.play().catch(() => { useClock = true; clockT = audio.currentTime || 0; clock0 = performance.now(); });
+  }
+  function pause() { if (useClock) clockT = now(); playing = false; audio.pause(); document.getElementById("pp").textContent = "▶"; }
+  function seek(t) { t = Math.max(0, Math.min(DS.DUR - 0.05, t)); if (useClock) { clockT = t; clock0 = performance.now(); } else audio.currentTime = t; }
+
+  const start = document.getElementById("start");
+  start.addEventListener("click", () => { start.style.opacity = 0; setTimeout(() => start.remove(), 600); document.fonts.ready.then(play); });
+  document.getElementById("pp").onclick = () => (playing ? pause() : play());
+  document.getElementById("fs").onclick = () => (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen());
+  const seekEl = document.getElementById("seek"), fill = seekEl.querySelector(".fill");
+  for (const [t0, , num, name] of DS.CHAPTERS) {
+    const d = document.createElement("div"); d.className = "tick"; d.style.left = (t0 / DS.DUR * 100) + "%";
+    d.innerHTML = `<span>${num} ${name}</span>`; seekEl.appendChild(d);
+  }
+  seekEl.addEventListener("click", (e) => { const r = seekEl.getBoundingClientRect(); seek((e.clientX - r.left) / r.width * DS.DUR); });
+  addEventListener("keydown", (e) => {
+    if (e.code === "Space") { e.preventDefault(); playing ? pause() : play(); }
+    if (e.key === "f" || e.key === "F") document.getElementById("fs").click();
+    if (e.key === "ArrowRight") seek(now() + 5); if (e.key === "ArrowLeft") seek(now() - 5);
+  });
+  let idle; addEventListener("mousemove", () => { document.body.classList.add("idle-off"); clearTimeout(idle); idle = setTimeout(() => document.body.classList.remove("idle-off"), 1800); });
+  const fmt = (s) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+  function frame() {
+    let t = now();
+    if (t >= DS.DUR - 0.05 && playing) { pause(); seek(0); t = 0; }
+    DS.render(ctx, t);
+    fill.style.width = (t / DS.DUR * 100) + "%";
+    document.getElementById("time").textContent = `${fmt(t)} / ${fmt(DS.DUR)}`;
+    requestAnimationFrame(frame);
+  }
+  document.fonts.ready.then(() => requestAnimationFrame(frame));
+})();
+</script>
+</body>
+</html>
